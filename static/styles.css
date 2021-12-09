@@ -29,155 +29,31 @@ h1{
   justify-content: center;
   flex-wrap:wrap;
 }
-.article{
+
+.frontal .card{
   position: relative;
-  margin:20px;
-  width: 350px;
-  height: 400px;
-  border-radius: 5px;
-
-}
-
-.marker{
-  height: 100px;
-  width: 100px;
-  position: absolute;
-  top:-25px;
-  left:-25px;
-  border-radius: 50%;
-  box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
-  z-index: 2;
-  background-color: orange;
-}
-
-.d20{
-  background-image: url("../img/d20.png");
-  background-repeat: no-repeat;
-  background-size: 80%;
-  background-position: center;
-}
-
-.box-photo{
-  max-height: 75%;
-  height: 75%;
-  width: 100%;
-  background-color:inherit;
-  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/1280px-Flask_logo.svg.png");
-  background-size: 150%;
-  background-position: -10px;
-  background-blend-mode:luminosity;
-  transition: all 0.2s linear;
-}
-
-.article:hover .box-photo{
-  background-size: 120%;
-  max-height: 30%;
-}
-
-.article:hover .box-text{
-  max-height: 70%;
+  width: 320px;
+  margin: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
   overflow:hidden;
+  background-color: white;
 }
 
-.article:hover .box-text p{
-  visibility: visible;
-}
-
-
-.fluorpink .box-photo {
-  box-shadow: 0px 0px 10px 0 var(--bg-card-fluorpink) inset, 0px -10px 10px 0 var(--bg-card-fluorpink) inset;
-}
-
-.fluorblue .box-photo {
-  box-shadow: 0px 0px 10px 0 var(--bg-card-fluorblue) inset, 0px -10px 10px 0 var(--bg-card-fluorblue) inset;
-}
-
-.fluorgreen .box-photo {
-  box-shadow: 0px 0px 10px 0 var(--bg-card-fluorgreen) inset, 0px -10px 10px 0 var(--bg-card-fluorgreen) inset;
-}
-
-.fluoryellow .box-photo {
-  box-shadow: 0px 0px 10px 0 var(--bg-card-fluoryellow) inset, 0px -10px 10px 0 var(--bg-card-fluoryellow) inset;
-}
-
-.box-text{
-  overflow: hidden;
-  max-height: 25%;
-  transition: all 0.2s linear;
-
-}
-
-.box-text p{
-  margin-left: 20px;
-  margin-right: 20px;
-  visibility: hidden;
-  transition-delay: 0.1s;
-}
-
-.article h1,h2,h3,h4,h5,h6{
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.fluorpink{
-  background-color: var(--bg-card-fluorpink);
-}
-.fluorblue{
-  background-color: var(--bg-card-fluorblue);
-}
-.fluorgreen{
-  background-color: var(--bg-card-fluorgreen);
-}
-.fluoryellow{
-  background-color: var(--bg-card-fluoryellow);
-}
-
-
-/*------------- FX: Article Blur + border gradient ------------------------------------------------------------------------*/
-/*------------- Article Blur----------------------------------------------------------------------------------------------*/
-.article::before{
-  content:"";
+.frontal .card:before{
+  content:'';
   position: absolute;
-  top:-2px;
-  left:-2px;
-  right:-2px;
-  bottom: -2px;
-  background-color: #ffffff;
-  z-index:-1;
-  border-radius: 5px;
-}
-.article::after{
-  content:"";
-  position: absolute;
-  top:-2px;
-  left:-2px;
-  right:-2px;
-  bottom: -2px;
-  background-color: #ffffff;
-  z-index:-1;
-  filter:blur(40px);
-  border-radius: 5px;
-}
-/*------------ Border Grdient ------------------------------------------------------------------------------------------*/
-.fluorpink::before,
-.fluorpink::after{
-  background: linear-gradient(235deg,var(--bg-card-fluorgreen),var(--bg-color),var(--bg-card-fluorblue));
+  left: 0;
+  bottom: calc(-100% + 4px);
+  width: 100%;
+  height: 100%;
+  background: #000;
+  transition: 0.5s ease-in-out;
 }
 
-.fluorblue::before,
-.fluorblue::after{
-  background: linear-gradient(235deg,var(--bg-card-fluoryellow),var(--bg-color),var(--bg-card-fluorpink));
+.frontal .fluoryellow:before{
+  background: var(--bg-card-fluoryellow)
 }
-
-.fluorgreen::before,
-.fluorgreen::after,
-.fluoryellow::before,
-.fluoryellow::after{
-  background: linear-gradient(235deg,var(--bg-card-fluorpink),var(--bg-color),var(--bg-card-fluorblue));
-}
-/* -------------------------------------------------FX END------------------------------------------------------------*/
-
 @keyframes coloresTexto{
 	0% {color: rgb(240,0,0);text-shadow: 1px 1px 2px black; text-shadow: 0px 0px 5px rgb(126,0,0), 0px 0px 10px rgba(255,0,0,0)}
 	25%{color: rgb(0,0,255);text-shadow: 1px 1px 2px black;text-shadow: 0px 0px 5px rgb(0,0,255), 0px 0px 10px rgba(255,0,0,1)}
@@ -186,7 +62,7 @@ h1{
 	100%{color: rgb(255,0,0);text-shadow: 1px 1px 2px black;text-shadow: 0px 0px 5px rgb(126,0,0),0px 0px 10px rgba(255,0,0,0)}
 }
 
-h1,.marker{
+h1{
 
 
 	animation-name: coloresTexto;

@@ -4,9 +4,8 @@
 
     <div class="frontal">
       {% for post in posts%}
-        <div class="article {{post.color}}">
-          <div class="box-photo" style="background-image: url({{post.foto}})"></div>
-          <div class="box-text">
+        <div class="card fluoryellow">
+          <div>
             <h2>{{post.titulo}}</h2>
             <h5>#tag #tag #tag</h5>
             <h6>{{post.autor}} {{post.fecha}}</h6>

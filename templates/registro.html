@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+    {% block content %}
+        <h1>Registro:</h1>
+        <div class="content-section">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb4">Registro</legend>
+                    <div class="form-group">
+                        {{ form.username(placeholder="Usuario", class="form-control form-control-lg") }}
+                        {% if form.username.errors %}
+                          {% for error in form.username.errors %}
+                            {{error}}
+                          {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email(placeholder="E-Mail", class="form-control form-control-lg") }}
+                        {% if form.email.errors %}
+                          {% for error in form.email.errors %}
+                            {{error}}
+                          {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password(placeholder="Clave",class="form-control form-control-lg") }}
+                        {% if form.password.errors %}
+                          {% for error in form.password.errors %}
+                            {{error}}
+                          {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.confirm(placeholder="Confirma la clave", class="form-control form-control-lg") }}
+                        {% if form.confirm.errors %}
+                          {% for error in form.confirm.errors %}
+                            {{error}}
+                          {% endfor %}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{form.submit()}}
+                </div>
+            </form>
+        </div>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                ¿Ya tienes una cuenta? pulsa <a href="" class="ml-2">ENTRAR</a>
+            </small>
+        </div>
+    {% endblock %}

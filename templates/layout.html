@@ -21,6 +21,15 @@
       <a href="/logout" class="w3-bar-item w3-button w3-right w3-black"><i class="fa fa-sign-out"></i></a>
       <a href="/login" class="w3-bar-item w3-button w3-right w3-green"><i class="fa fa-sign-in"></i></a>
     </div>
+    <div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {{ message }}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
     {% block content %}
 
     {% endblock %}
