@@ -10,9 +10,9 @@
                         {{ form.username(placeholder="Usuario", class="form-control form-control-lg") }}
                         {% if form.username.errors %}
                           {% for error in form.username.errors %}
-                            <div class="w3-panel w3-yellow">
+                            <span class="w3-yellow">
                               {{error}}
-                            </div>                            
+                            </span>
                           {% endfor %}
                         {% endif %}
                     </div>
