@@ -42,11 +42,12 @@ def nosotros():
 @app.route("/login",  methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.username.data == 'sera' and form.password.data == '1234':
-        flash('Ale, logueado!', 'success')
-        return redirect(url_for('home'))
-    else:
-        flash('Algo va mal...', 'danger')
+    if form.validate_on_submit():
+        if form.username.data == 'sera' and form.password.data == '1234':
+            flash('Ale, logueado!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Algo va mal...', 'danger')
     return render_template("login.html", title="Login", form=form)
 
 
