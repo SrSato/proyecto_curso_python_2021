@@ -1,8 +1,12 @@
+from datetime import datetime
 from flask import Flask, request, render_template, url_for, redirect, flash
-from register import RegistrationForm
+from flask_sqlalchemy import SQLAlchemy
+from register import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '3er5tte4b55q23c2y4afvfw41wrnp2zr84yys9ca92wam20js6'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://site.db'
+db = SQLAlchemy(app)
 
 posts = [
     {
@@ -27,24 +31,31 @@ posts = [
 @app.route("/home")
 @app.route("/")
 def home():
-    return render_template("home.html", title="blogando", posts=posts)
+    return render_template("home.html", title="Blogando", posts=posts)
 
 
 @app.route("/nosotros")
 def nosotros():
-    return render_template("nosotros.html", title="nosotros")
+    return render_template("nosotros.html", title="Nosotros")
+
+
+@app.route("/login",  methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.username.data == 'sera' and form.password.data == '1234':
+        flash('Ale, logueado!', 'success')
+        return redirect(url_for('home'))
+    else:
+        flash('Algo va mal...', 'danger')
+    return render_template("login.html", title="Login", form=form)
 
 
 @app.route("/registro", methods=['GET', 'POST'])
 def registro():
     form = RegistrationForm()
-    print("Llego hasta el if")
-    print(form.validate_on_submit())
     if request.method == "POST" and form.validate():
-        print("entro en el if")
         return redirect(url_for('home'))
-    print("No entro")
-    return render_template('registro.html', title="registro", form=form)
+    return render_template('registro.html', title="Registro", form=form)
 
 
 @app.route("/gaslands")
