@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField(
-        'Usuario', [validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
+        'Usuario', [validators.DataRequired(message="Falta el nombre de usuario"), validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
     password = PasswordField('Clave', [
         validators.DataRequired(message="Campo obligatorio")])
     remember = BooleanField('Recordarme')
