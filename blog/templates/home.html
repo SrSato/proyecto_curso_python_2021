@@ -7,9 +7,9 @@
         <div class="card fluoryellow">
           <div>
             <h2>{{post.titulo}}</h2>
-            <h5>#tag #tag #tag</h5>
-            <h6>{{post.autor}} {{post.fecha}}</h6>
+            <h6>Publicado el <span>{{post.fecha}}</span> por <span>{{post.autor}}</span> </h6>
             <p>{{post.contenido}}</p>
+            <h5>#tag #tag #tag</h5> 
           </div>
         </div>
       {% endfor %}
