@@ -1,7 +1,8 @@
 from flask import request, render_template, url_for, redirect, flash
-from blog import app
+from blog import app, db, bcrypt, login_manager
 from blog.modelos import Usuario, Post
 from blog.forms import RegistrationForm, LoginForm
+from flask_login import login_user, current_user, logout_user, login_required
 
 posts = [
     {
@@ -25,6 +26,7 @@ posts = [
 
 @app.route("/home")
 @app.route("/")
+@login_required
 def home():
     return render_template("home.html", title="Blogando", posts=posts)
 
@@ -36,9 +38,13 @@ def nosotros():
 
 @app.route("/login",  methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.username.data == 'sera' and form.password.data == '1234':
+        usuario = Usuario.query.filter_by(username=form.username.data).first()
+        if usuario and bcrypt.check_password_hash(usuario.password, form.password.data):
+            login_user(usuario)
             flash('Ale, logueado!', 'success')
             return redirect(url_for('home'))
         else:
@@ -46,11 +52,26 @@ def login():
     return render_template("login.html", title="Login", form=form)
 
 
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
+
+
 @app.route("/registro", methods=['GET', 'POST'])
 def registro():
-    form = RegistrationForm()
-    if request.method == "POST" and form.validate():
+    if current_user.is_authenticated:
         return redirect(url_for('home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_pass = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        usuario = Usuario(username=form.username.data,
+                          email=form.email.data, password=hashed_pass)
+        db.session.add(usuario)
+        db.session.commit()
+        flash(f'Cuenta de {form.username.data} creada con exito', 'success')
+        return redirect(url_for('login'))
     return render_template('registro.html', title="Registro", form=form)
 
 
