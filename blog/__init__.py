@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcrypt=Bcrypt(app)
 login_manager = LoginManager()
-login_manager.login_message="Por favor, inicie sesión para ver este contenido"
+login_manager.login_message = "Por favor, inicie sesión para ver este contenido"
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 

@@ -4,12 +4,12 @@
 
     <div class="frontal">
       {% for post in posts%}
-        <div class="card fluoryellow">
+        <div class="card fluoryellow ">
           <div>
-            <h2>{{post.titulo}}</h2>
-            <h6>Publicado el <span>{{post.fecha}}</span> por <span>{{post.autor}}</span> </h6>
+            <h2 class="border-Text">{{post.titulo}}</h2>
+            <h6 class="border-Text">Publicado el <span>{{post.fecha}}</span> por <span>{{post.autor}}</span> </h6>
             <p>{{post.contenido}}</p>
-            <h5>#tag #tag #tag</h5> 
+            <h5 class="border-Text">#tag #tag #tag</h5>
           </div>
         </div>
       {% endfor %}
