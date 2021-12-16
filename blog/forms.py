@@ -5,13 +5,34 @@ from wtforms import Form, BooleanField, StringField, PasswordField, SubmitField,
 from blog.modelos import Usuario
 
 
+class PostForm(FlaskForm):
+    titulo = StringField(
+        'Título',
+        [validators.DataRequired(message="Dale un título a tu publicación.")])
+    contenido = StringField(
+        'Contenido',
+        [validators.DataRequired(message="No dejes vacía la publicación")])
+    submit = SubmitField('Publicar')
+
+
 class UpdateAccountForm(FlaskForm):
     username = StringField(
-        'Usuario', [validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
+        'Usuario',
+        [validators.Length(min=4,
+                           max=25,
+                           message="Debe estar entre 4 y 25 caracteres")])
+
     email = StringField(
-        'E-mail', [validators.Length(min=6, max=35, message="Debe estar entre 6 y 35 caracteres"), validators.Email(message="Escribe un mail válido.")])
-    picture = FileField('Cambiar imagen de perfil', validators=[
-                        FileAllowed(['jpg', 'png'])])
+        'E-mail',
+        [validators.Length(min=6,
+                           max=35,
+                           message="Debe estar entre 6 y 35 caracteres"),
+         validators.Email(message="Escribe un mail válido.")])
+
+    picture = FileField(
+        'Cambiar imagen de perfil',
+        validators=[FileAllowed(['jpg', 'png'])])
+
     submit = SubmitField('Actualizar')
 
     def validate_usuario(self, username):
@@ -31,14 +52,25 @@ class UpdateAccountForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username = StringField(
-        'Usuario', [validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
+        'Usuario',
+        [validators.Length(min=4,
+                           max=25,
+                           message="Debe estar entre 4 y 25 caracteres")])
+
     email = StringField(
-        'E-mail', [validators.Length(min=6, max=35, message="Debe estar entre 6 y 35 caracteres"), validators.Email(message="Escribe un mail válido.")])
-    password = PasswordField('Clave', [
-        validators.DataRequired(message="Campo obligatorio"),
-        validators.EqualTo(
+        'E-mail',
+        [validators.Length(min=6,
+                           max=35,
+                           message="Debe estar entre 6 y 35 caracteres"),
+         validators.Email(message="Escribe un mail válido.")])
+
+    password = PasswordField(
+        'Clave',
+        [validators.DataRequired(message="Campo obligatorio"),
+         validators.EqualTo(
             'confirm', message='Las contraseñas deben coincidir')
-    ])
+         ])
+
     confirm = PasswordField('Repite la clave')
     submit = SubmitField('Registro')
 
@@ -57,7 +89,9 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField(
-        'Usuario', [validators.DataRequired(message="Falta el nombre de usuario"), validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
+        'Usuario',
+        [validators.DataRequired(message="Falta el nombre de usuario"),
+         validators.Length(min=4, max=25, message="Debe estar entre 4 y 25 caracteres")])
     password = PasswordField('Clave', [
         validators.DataRequired(message="Campo obligatorio")])
     remember = BooleanField('Recordarme')

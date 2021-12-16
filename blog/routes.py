@@ -1,69 +1,81 @@
 import os
 import secrets
 from PIL import Image
-from flask import request, render_template, url_for, redirect, flash
+from flask import request, render_template, url_for, redirect, flash, abort
 from blog import app, db, bcrypt, login_manager
 from blog.modelos import Usuario, Post
-from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from flask_login import login_user, current_user, logout_user, login_required
-
-posts = [
-    {
-        'autor': 'Pepe Gotera',
-        'titulo': 'Reforma Molona',
-        'fecha': '12-12-2012',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro aut architecto iste nulla voluptatibus recusandae, eligendi laborum consequuntur quis temporibus fuga delectus nisi error id necessitatibus maiores. Fugit, nostrum corporis.',
-        'color': 'fluorgreen',
-        'foto': 'https://www.reformasparaviviendas.com/wp-content/uploads/2020/04/Empresa-de-reformas-integrales-en-Valencia.jpg'
-    },
-    {
-        'autor': 'Rodolfo Langostino',
-        'titulo': 'Menu Nochebuena',
-        'fecha': '13-11-2011',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium illum officia iste, placeat ut, vitae maiores adipisci sapiente ex nisi nam delectus totam. Ducimus blanditiis impedit, maiores inventore magnam unde.',
-        'color': 'fluorpink',
-        'foto': "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fokdiario.com%2Fimg%2F2018%2F12%2F17%2Fmenu-recetas-de-navidad.jpg&f=1&nofb=1"
-    },
-    {
-        'autor': 'Pepe Gotera',
-        'titulo': 'Reforma Molona',
-        'fecha': '12-12-2012',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro aut architecto iste nulla voluptatibus recusandae, eligendi laborum consequuntur quis temporibus fuga delectus nisi error id necessitatibus maiores. Fugit, nostrum corporis.',
-        'color': 'fluorgreen',
-        'foto': 'https://www.reformasparaviviendas.com/wp-content/uploads/2020/04/Empresa-de-reformas-integrales-en-Valencia.jpg'
-    },
-    {
-        'autor': 'Rodolfo Langostino',
-        'titulo': 'Menu Nochebuena',
-        'fecha': '13-11-2011',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium illum officia iste, placeat ut, vitae maiores adipisci sapiente ex nisi nam delectus totam. Ducimus blanditiis impedit, maiores inventore magnam unde.',
-        'color': 'fluorpink',
-        'foto': "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fokdiario.com%2Fimg%2F2018%2F12%2F17%2Fmenu-recetas-de-navidad.jpg&f=1&nofb=1"
-    },
-    {
-        'autor': 'Pepe Gotera',
-        'titulo': 'Reforma Molona',
-        'fecha': '12-12-2012',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro aut architecto iste nulla voluptatibus recusandae, eligendi laborum consequuntur quis temporibus fuga delectus nisi error id necessitatibus maiores. Fugit, nostrum corporis.',
-        'color': 'fluorgreen',
-        'foto': 'https://www.reformasparaviviendas.com/wp-content/uploads/2020/04/Empresa-de-reformas-integrales-en-Valencia.jpg'
-    },
-    {
-        'autor': 'Rodolfo Langostino',
-        'titulo': 'Menu Nochebuena',
-        'fecha': '13-11-2011',
-        'contenido': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium illum officia iste, placeat ut, vitae maiores adipisci sapiente ex nisi nam delectus totam. Ducimus blanditiis impedit, maiores inventore magnam unde.',
-        'color': 'fluorpink',
-        'foto': "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fokdiario.com%2Fimg%2F2018%2F12%2F17%2Fmenu-recetas-de-navidad.jpg&f=1&nofb=1"
-    }
-]
 
 
 @app.route("/home")
 @app.route("/")
-@login_required
 def home():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(
+        Post.fecha.desc()).paginate(page=page, per_page=5)
     return render_template("home.html", title="Blogando", posts=posts)
+
+
+@app.route("/user/<string:usuarionombre>")
+def user_posts(usuarionombre):
+    page = request.args.get('page', 1, type=int)
+    user = Usuario.query.filter_by(usuarionombre=usuarionombre).first_or_404()
+    posts = Post.query.filter_by(autor=user).order_by(
+        Post.fecha.desc()).paginate(page=page, per_page=5)
+    return render_template('user_posts.html', posts=posts, user=user)
+
+
+@app.route("/post/new", methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(titulo=form.titulo.data,
+                    contenido=form.contenido.data,
+                    autor=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Publicacion creada correctamente.', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_post.html', title="Nueva publicacion", form=form)
+
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', titulo=post.titulo, post=post)
+
+
+@app.route("/post/<int:post_id>/update", methods=["GET", "POST"])
+@login_required
+def upadate_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.autor != current_user:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.titulo = form.titulo.data
+        post.contenido = form.contenido.data,
+        db.session.commit()
+        flash('Publicacion actualizada.', 'success')
+        return redirect(url_for('post', post_id=post.id))
+    elif request.method == 'GET':
+        form.titulo.data = post.titulo
+        form.contenido.data = post.contenido
+    return render_template('create_post.html', title='Actualizar publicación', form=form, legend='Actualizar publicación')
+
+
+@app.route("/post/<int:post_id>/delete", methods=["POST"])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.autor != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Publicación eliminada', 'success')
+    return redirect(url_for('home'))
 
 
 @app.route("/nosotros")

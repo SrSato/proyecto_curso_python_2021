@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+    {% block content %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.autor.image_file) }}">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{{ url_for('user_posts', usuarionombre=post.autor.usuarionombre) }}">{{ post.autor.usuarionombre }}</a>
+                    <small class="text-muted">{{ post.fecha.strftime('%Y-%m-%d') }}</small>
+                    {% if post.autor == current_user %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Actualizar</a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Eliminar</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <h2 class="article-title text-shadow">{{ post.titulo }}</h2>
+                <p class="article-content">{{ post.contenido }}</p>
+                </div>
+            </article>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Eliminar publicación</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        <div class="modal-body">
+                            ¿Desea eliminar la publicación permanentemente?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Mejor no</button>
+                            <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+                                <input type="submit" class="btn btn-danger" value="Borrar">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% endblock %}

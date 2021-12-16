@@ -13,5 +13,6 @@ login_manager = LoginManager()
 login_manager.login_message = "Por favor, inicie sesión para ver este contenido"
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 from blog import routes
