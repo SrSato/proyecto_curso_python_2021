@@ -96,3 +96,21 @@ class LoginForm(FlaskForm):
         validators.DataRequired(message="Campo obligatorio")])
     remember = BooleanField('Recordarme')
     submit = SubmitField('Entrar')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', [validators.DataRequired(
+    ), validators.Email(message='Escriba un correo electrónico')])
+    submit = SubmitField('Actualizar')
+
+    def validate_email(self, email):
+        usuario = Usuario.query.filter_by(email=email.data).first()
+        if usuario is None:
+            raise ValidationError('NEIN! NEIN! NEIN! NEIN! NEIN!')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', [validators.DataRequired()])
+    confirm_password = PasswordField('Confirmar password', [
+                                     validators.DataRequired(), validators.EqualTo('password')])
+    submit = SubmitField('Actualizar')

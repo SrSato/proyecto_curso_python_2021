@@ -1,7 +1,6 @@
   {% extends "layout.html" %}
   {% block content %}
     <h1>Tendencias:</h1>
-
     <div class="frontal">
       {% for post in posts.items %}
         <div class="card fluoryellow ">
@@ -12,7 +11,7 @@
               </div>
               <h2 class="border-Text">{{post.titulo}}</h2>
             </div>
-            <h6 class="border-Text">Publicado el <span>{{post.fecha.strftime('%d-%m-%Y')}}</span> por <span>{{post.autor.username}}</span> </h6>
+            <h6 class="border-Text">Publicado el <span>{{post.fecha.strftime('%d-%m-%Y')}}</span> por <span><a href="user/{{post.autor.username}}">{{post.autor.username}}</a></span> </h6>
             <p>{{post.contenido}}</p>
             <h5 class="border-Text">#tag #tag #tag</h5>
           </div>

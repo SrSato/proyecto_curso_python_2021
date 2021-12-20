@@ -2,10 +2,11 @@ import os
 import secrets
 from PIL import Image
 from flask import request, render_template, url_for, redirect, flash, abort
-from blog import app, db, bcrypt, login_manager
+from blog import app, db, bcrypt, login_manager, mail
 from blog.modelos import Usuario, Post
-from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 
 @app.route("/home")
@@ -17,10 +18,10 @@ def home():
     return render_template("home.html", title="Blogando", posts=posts)
 
 
-@app.route("/user/<string:usuarionombre>")
-def user_posts(usuarionombre):
+@app.route("/user/<string:username>")
+def user_posts(username):
     page = request.args.get('page', 1, type=int)
-    user = Usuario.query.filter_by(usuarionombre=usuarionombre).first_or_404()
+    user = Usuario.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(autor=user).order_by(
         Post.fecha.desc()).paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
@@ -166,6 +167,49 @@ def account():
     image_file = url_for(
         'static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Mi cuenta', image_file=image_file, form=form)
+
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Imploración de cambio de contraseña',
+                  sender='noreply@nomail.com', recipients=[user.email])
+    msg.body = f'''Para cambiar tu contraseña pulsa el siguiente enlace:
+        {url_for('reset_token', token=token, _external=True)}
+        Si no deseas cambiar la contraseña, simplemente ignora este mensaje (no te sepa mal hacerme trabajar para nada...)
+        '''
+    mail.send(msg)
+
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = Usuario.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('Si tu correo está en nuestra base de datos, se mandará un correo con las instrucciones a seguir.', 'info')
+        return redirect(url_for('home'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = Usuario.verify_reset_token(token)
+    if user is None:
+        flash('Enlace no valido o expirado', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Contraseña actualizada, a ver si esta no se te olvida...', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title='Actualizar contraseña', form=form)
 
 
 @app.route("/gaslands")
