@@ -1,18 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 from flask_login import current_user
-from wtforms import Form, BooleanField, StringField, PasswordField, SubmitField, validators, ValidationError
+from wtforms import (BooleanField, StringField, PasswordField,
+                     SubmitField, validators, ValidationError)
 from blog.modelos import Usuario
-
-
-class PostForm(FlaskForm):
-    titulo = StringField(
-        'Título',
-        [validators.DataRequired(message="Dale un título a tu publicación.")])
-    contenido = StringField(
-        'Contenido',
-        [validators.DataRequired(message="No dejes vacía la publicación")])
-    submit = SubmitField('Publicar')
 
 
 class UpdateAccountForm(FlaskForm):
